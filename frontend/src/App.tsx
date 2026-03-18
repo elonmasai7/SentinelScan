@@ -82,9 +82,50 @@ function App() {
       return;
     }
     const data = await response.json();
+    if (data.length === 0) {
+      await ensureDefaultProject();
+      return;
+    }
     setProjects(data);
     if (data.length > 0 && !selectedProject) {
       setSelectedProject(data[0].id);
+    }
+  };
+
+  const ensureDefaultProject = async () => {
+    if (!token) return;
+    try {
+      const wsResponse = await authFetch(`${API_BASE}/org/workspaces`);
+      if (!wsResponse.ok) {
+        return;
+      }
+      let workspaces = await wsResponse.json();
+      if (!workspaces || workspaces.length === 0) {
+        const createWs = await authFetch(
+          `${API_BASE}/org/workspaces?name=${encodeURIComponent("Demo Workspace")}`,
+          { method: "POST" },
+        );
+        if (!createWs.ok) {
+          return;
+        }
+        workspaces = [await createWs.json()];
+      }
+      const workspaceId = workspaces[0]?.id;
+      if (!workspaceId) return;
+      const createProject = await authFetch(
+        `${API_BASE}/org/projects?workspace_id=${encodeURIComponent(workspaceId)}&name=${encodeURIComponent(
+          "Demo Project",
+        )}`,
+        { method: "POST" },
+      );
+      if (!createProject.ok) {
+        return;
+      }
+      const project = await createProject.json();
+      setProjects([project]);
+      setSelectedProject(project.id);
+    } catch {
+      // leave as-is if provisioning fails
     }
   };
 

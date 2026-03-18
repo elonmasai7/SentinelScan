@@ -25,6 +25,11 @@ class Settings(BaseSettings):
     rate_limit_enabled: bool = True
     rate_limit_per_minute: int = 120
     metrics_enabled: bool = True
+    metrics_token: str = ""
+    otel_enabled: bool = False
+    otel_service_name: str = "sentinelscan-api"
+    otel_exporter_otlp_endpoint: str = "http://otel-collector:4317"
+    otel_exporter_otlp_headers: str = ""
 
 
 @lru_cache

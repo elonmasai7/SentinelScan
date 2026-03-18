@@ -70,9 +70,21 @@ OpenAPI is available at `http://localhost:8000/docs` and includes JWT bearer aut
 Redis-backed fixed window rate limiting is enabled by default. Configure with:
 - `RATE_LIMIT_ENABLED`
 - `RATE_LIMIT_PER_MINUTE`
+Responses include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` (epoch seconds). 429 responses include `Retry-After`.
 
 ## Structured Logs
-API requests are logged in JSON with request IDs for tracing.
+API requests are logged in JSON with request IDs and W3C `traceparent` trace IDs for OpenTelemetry compatibility.
+
+## Prometheus Metrics
+Metrics are exposed at `http://localhost:8000/metrics` when `METRICS_ENABLED=true`.
+Set `METRICS_TOKEN` to require `Authorization: Bearer <token>`.
+
+## OpenTelemetry
+Enable tracing with:
+- `OTEL_ENABLED=true`
+- `OTEL_SERVICE_NAME=sentinelscan-api`
+- `OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317`
+- `OTEL_EXPORTER_OTLP_HEADERS=key=value,another=val`
 
 ## CI Smoke Test
 ```bash

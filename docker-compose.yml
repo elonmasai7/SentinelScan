@@ -26,6 +26,12 @@ services:
       DEMO_SEED: "true"
       DEMO_EMAIL: demo@sentinelscan.io
       DEMO_PASSWORD: DemoPass123!
+      METRICS_ENABLED: "true"
+      METRICS_TOKEN: ""
+      OTEL_ENABLED: "false"
+      OTEL_SERVICE_NAME: sentinelscan-api
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_HEADERS: ""
     ports:
       - "8000:8000"
     depends_on:
@@ -42,6 +48,10 @@ services:
       DEMO_SEED: "true"
       DEMO_EMAIL: demo@sentinelscan.io
       DEMO_PASSWORD: DemoPass123!
+      OTEL_ENABLED: "false"
+      OTEL_SERVICE_NAME: sentinelscan-worker
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_EXPORTER_OTLP_HEADERS: ""
     depends_on:
       - db
       - redis
