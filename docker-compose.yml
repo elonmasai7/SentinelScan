@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sentinelscan
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/sentinelscan
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: change-me
+      DEMO_SEED: "true"
+      DEMO_EMAIL: demo@sentinelscan.io
+      DEMO_PASSWORD: DemoPass123!
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  worker:
+    build: ./backend
+    command: celery -A app.core.celery_app.celery_app worker --loglevel=info --concurrency=2
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/sentinelscan
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: change-me
+      DEMO_SEED: "true"
+      DEMO_EMAIL: demo@sentinelscan.io
+      DEMO_PASSWORD: DemoPass123!
+    depends_on:
+      - db
+      - redis
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE: /api
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
