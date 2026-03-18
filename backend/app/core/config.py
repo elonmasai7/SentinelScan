@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     app_name: str = "SentinelScan"
     environment: str = "development"
     api_prefix: str = "/api"
+    cors_origins: str = "*"
 
     database_url: str = "postgresql+asyncpg://postgres:postgres@db:5432/sentinelscan"
     redis_url: str = "redis://redis:6379/0"
@@ -21,6 +22,9 @@ class Settings(BaseSettings):
     demo_seed: bool = True
     demo_email: str = "demo@sentinelscan.io"
     demo_password: str = "DemoPass123!"
+    rate_limit_enabled: bool = True
+    rate_limit_per_minute: int = 120
+    metrics_enabled: bool = True
 
 
 @lru_cache

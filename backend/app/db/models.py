@@ -82,7 +82,10 @@ class Finding(Base):
     severity: Mapped[str] = mapped_column(String(20))
     cvss_score: Mapped[float] = mapped_column(Float)
     confidence: Mapped[str] = mapped_column(String(20))
+    plugin: Mapped[str] = mapped_column(String(80), default="unknown")
+    cwe: Mapped[str | None] = mapped_column(String(32), nullable=True)
     evidence: Mapped[str] = mapped_column(Text)
     recommendation: Mapped[str] = mapped_column(Text)
+    remediation: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     scan: Mapped[Scan] = relationship(back_populates="findings")

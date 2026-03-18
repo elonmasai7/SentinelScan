@@ -219,6 +219,138 @@ h1 {
   flex-wrap: wrap;
 }
 
+.export-inline .actions {
+  justify-content: flex-end;
+}
+
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.findings-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.finding-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.finding-pill {
+  border: 1px solid #efe7d5;
+  background: #fff7e8;
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  text-align: left;
+  cursor: pointer;
+}
+
+.finding-pill.active {
+  border-color: var(--accent);
+  box-shadow: 0 8px 18px rgba(15, 118, 110, 0.15);
+}
+
+.finding-pill .title {
+  margin: 0;
+  font-weight: 600;
+}
+
+.finding-pill .meta {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.finding-pill .score {
+  font-weight: 700;
+  color: var(--accent-dark);
+}
+
+.remediation-card {
+  border-radius: 18px;
+  background: #f2f7f4;
+  padding: 16px;
+  border: 1px solid #dbe8e2;
+}
+
+.remediation-card .title {
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.heatmap-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 40px;
+  gap: 10px;
+  align-items: center;
+}
+
+.heatmap-bar {
+  height: 8px;
+  background: #efe7d5;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.heatmap-bar span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.heatmap-label,
+.heatmap-count {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.status-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-pill {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #efe7d5;
+  color: var(--muted);
+}
+
+.status-pill.completed {
+  background: rgba(15, 118, 110, 0.15);
+  color: var(--accent-dark);
+}
+
+.status-pill.failed {
+  background: rgba(193, 18, 31, 0.15);
+  color: var(--critical);
+}
+
+.status-pill.running {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--low);
+}
+
 .ghost {
   padding: 10px 14px;
   border-radius: 999px;

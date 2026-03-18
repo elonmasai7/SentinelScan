@@ -60,6 +60,24 @@ npm run dev
 - `GET /api/scan/{scan_id}` — scan results
 - `GET /api/scans` — scan history
 - `GET /api/scan/{scan_id}/report?format=json|pdf` — export report
+- `GET /healthz` — liveness
+- `GET /readyz` — readiness (checks DB)
+
+## OpenAPI Docs
+OpenAPI is available at `http://localhost:8000/docs` and includes JWT bearer auth.
+
+## Rate Limiting
+Redis-backed fixed window rate limiting is enabled by default. Configure with:
+- `RATE_LIMIT_ENABLED`
+- `RATE_LIMIT_PER_MINUTE`
+
+## Structured Logs
+API requests are logged in JSON with request IDs for tracing.
+
+## CI Smoke Test
+```bash
+./scripts/smoke_test.sh
+```
 
 ## Demo Mode
 Toggle demo mode in the UI or POST with `demo_mode: true`. The scanner will run against:

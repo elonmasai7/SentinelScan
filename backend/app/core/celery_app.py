@@ -8,6 +8,7 @@ celery_app = Celery(
     "sentinelscan",
     broker=settings.redis_url,
     backend=settings.redis_url,
+    include=["app.tasks.scans"],
 )
 
 celery_app.conf.update(
@@ -17,4 +18,4 @@ celery_app.conf.update(
     timezone="UTC",
 )
 
-celery_app.autodiscover_tasks(["app.tasks"])
+celery_app.autodiscover_tasks(["app"])

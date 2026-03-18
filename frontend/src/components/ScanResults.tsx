@@ -4,19 +4,12 @@ interface Props {
   scan: Scan | null;
   apiBase: string;
   token: string;
+  compact?: boolean;
 }
 
-const severityColor: Record<string, string> = {
-  critical: "critical",
-  high: "high",
-  medium: "medium",
-  low: "low",
-  info: "info",
-};
-
-function ScanResults({ scan, apiBase, token }: Props) {
+function ScanResults({ scan, apiBase, token, compact }: Props) {
   if (!scan) {
-    return (
+    return compact ? <span className="hint">No scan</span> : (
       <div className="empty-state">
         <h3>No scan yet</h3>
         <p>Kick off a scan to see findings, risk scores, and exportable reports.</p>
@@ -45,21 +38,23 @@ function ScanResults({ scan, apiBase, token }: Props) {
   };
 
   return (
-    <div className="scan-results">
-      <div className="scan-meta">
-        <div>
-          <p className="label">Target</p>
-          <p className="value">{scan.target_url}</p>
+    <div className={compact ? "export-inline" : "scan-results"}>
+      {!compact && (
+        <div className="scan-meta">
+          <div>
+            <p className="label">Target</p>
+            <p className="value">{scan.target_url}</p>
+          </div>
+          <div>
+            <p className="label">Status</p>
+            <p className="value">{scan.status}</p>
+          </div>
+          <div>
+            <p className="label">Risk Score</p>
+            <p className="value">{(scan.summary_risk || 0).toFixed(1)}</p>
+          </div>
         </div>
-        <div>
-          <p className="label">Status</p>
-          <p className="value">{scan.status}</p>
-        </div>
-        <div>
-          <p className="label">Risk Score</p>
-          <p className="value">{(scan.summary_risk || 0).toFixed(1)}</p>
-        </div>
-      </div>
+      )}
 
       <div className="actions">
         <button className="ghost" onClick={() => downloadReport("json")}>
@@ -68,28 +63,6 @@ function ScanResults({ scan, apiBase, token }: Props) {
         <button className="ghost" onClick={() => downloadReport("pdf")}>
           Export PDF
         </button>
-      </div>
-
-      <div className="findings">
-        {scan.findings.length === 0 ? (
-          <p className="hint">No findings yet. If scan is running, results will appear soon.</p>
-        ) : (
-          scan.findings.map((finding) => (
-            <article key={finding.id} className="finding-card">
-              <div className="finding-header">
-                <div>
-                  <h4>{finding.title}</h4>
-                  <p className="category">{finding.category}</p>
-                </div>
-                <span className={`severity ${severityColor[finding.severity.toLowerCase()] || "info"}`}>
-                  {finding.severity.toUpperCase()} {finding.cvss_score.toFixed(1)}
-                </span>
-              </div>
-              <p className="evidence">{finding.evidence}</p>
-              <p className="recommendation">{finding.recommendation}</p>
-            </article>
-          ))
-        )}
       </div>
     </div>
   );

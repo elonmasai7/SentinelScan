@@ -8,7 +8,7 @@ interface Props {
 function ScanHistory({ history, onSelect }: Props) {
   return (
     <div className="scan-history">
-      <h3>Recent Scans</h3>
+      <h3>Scan Timeline</h3>
       {history.length === 0 ? (
         <p className="hint">No scans yet.</p>
       ) : (
@@ -17,9 +17,12 @@ function ScanHistory({ history, onSelect }: Props) {
             <li key={scan.id} onClick={() => onSelect(scan)}>
               <div>
                 <p className="target">{scan.target_url}</p>
-                <p className="meta">{scan.status} • {new Date(scan.created_at).toLocaleString()}</p>
+                <p className="meta">{new Date(scan.created_at).toLocaleString()}</p>
               </div>
-              <span className="risk">{(scan.summary_risk || 0).toFixed(1)}</span>
+              <div className="status-group">
+                <span className={`status-pill ${scan.status}`}>{scan.status}</span>
+                <span className="risk">{(scan.summary_risk || 0).toFixed(1)}</span>
+              </div>
             </li>
           ))}
         </ul>

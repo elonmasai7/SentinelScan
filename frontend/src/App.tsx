@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import ScanForm from "./components/ScanForm";
 import ScanResults from "./components/ScanResults";
 import ScanHistory from "./components/ScanHistory";
+import RiskHeatmap from "./components/RiskHeatmap";
+import FindingsPanel from "./components/FindingsPanel";
 
 export type Finding = {
   id: string;
@@ -10,8 +12,11 @@ export type Finding = {
   severity: string;
   cvss_score: number;
   confidence: string;
+  plugin: string;
+  cwe?: string | null;
   evidence: string;
   recommendation: string;
+  remediation?: string | null;
 };
 
 export type Scan = {
@@ -44,6 +49,7 @@ const statusCopy: Record<string, string> = {
 
 function App() {
   const [activeScan, setActiveScan] = useState<Scan | null>(null);
+  const [activeFinding, setActiveFinding] = useState<Finding | null>(null);
   const [history, setHistory] = useState<ScanSummary[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProject, setSelectedProject] = useState<string>("");
@@ -98,6 +104,9 @@ function App() {
       }
       const data = await response.json();
       setActiveScan(data);
+      if (data.findings && data.findings.length > 0 && !activeFinding) {
+        setActiveFinding(data.findings[0]);
+      }
       if (data.status === "completed" || data.status === "failed") {
         done = true;
         await fetchHistory();
@@ -129,6 +138,7 @@ function App() {
         throw new Error("Failed to create scan");
       }
       const scan = await response.json();
+      setActiveFinding(null);
       await pollScan(scan.id);
     } catch (err) {
       setError((err as Error).message);
@@ -198,18 +208,56 @@ function App() {
         </section>
 
         <section className="panel results">
-          <ScanResults scan={activeScan} apiBase={API_BASE} token={token} />
+          <div className="results-header">
+            <div>
+              <h3>Risk Overview</h3>
+              <p className="hint">CVSS-style distribution across findings.</p>
+            </div>
+            <div className="actions">
+              <ScanResults scan={activeScan} apiBase={API_BASE} token={token} compact />
+            </div>
+          </div>
+          <RiskHeatmap scan={activeScan} />
+          <div className="findings-layout">
+            <div>
+              <h3>Findings</h3>
+              <FindingsPanel
+                findings={activeScan?.findings || []}
+                activeId={activeFinding?.id || null}
+                onSelect={(finding) => setActiveFinding(finding)}
+              />
+            </div>
+            <div className="remediation-card">
+              <h3>AI Remediation</h3>
+              {activeFinding ? (
+                <>
+                  <p className="title">{activeFinding.title}</p>
+                  <p className="meta">
+                    {activeFinding.category} • {activeFinding.cwe ? `CWE ${activeFinding.cwe}` : "No CWE mapped"}
+                  </p>
+                  <p className="evidence">{activeFinding.evidence}</p>
+                  <p className="recommendation">{activeFinding.remediation || activeFinding.recommendation}</p>
+                </>
+              ) : (
+                <p className="hint">Select a finding to view remediation guidance.</p>
+              )}
+            </div>
+          </div>
         </section>
 
         <section className="panel history">
-          <ScanHistory history={history} onSelect={async (scan) => {
-            const response = await authFetch(`${API_BASE}/scan/${scan.id}`);
-            if (!response.ok) {
-              return;
-            }
-            const data = await response.json();
-            setActiveScan(data);
-          }} />
+          <ScanHistory
+            history={history}
+            onSelect={async (scan) => {
+              const response = await authFetch(`${API_BASE}/scan/${scan.id}`);
+              if (!response.ok) {
+                return;
+              }
+              const data = await response.json();
+              setActiveScan(data);
+              setActiveFinding(data.findings?.[0] || null);
+            }}
+          />
         </section>
       </main>
     </div>

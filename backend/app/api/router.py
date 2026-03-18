@@ -114,8 +114,11 @@ async def get_scan(
                 "severity": f.severity,
                 "cvss_score": f.cvss_score,
                 "confidence": f.confidence,
+                "plugin": f.plugin,
+                "cwe": f.cwe,
                 "evidence": f.evidence,
                 "recommendation": f.recommendation,
+                "remediation": f.remediation,
             }
             for f in scan.findings
         ],
@@ -161,8 +164,11 @@ async def export_report(
                 "severity": f.severity,
                 "cvss_score": f.cvss_score,
                 "confidence": f.confidence,
+                "plugin": f.plugin,
+                "cwe": f.cwe,
                 "evidence": f.evidence,
                 "recommendation": f.recommendation,
+                "remediation": f.remediation,
             }
             for f in scan.findings
         ],

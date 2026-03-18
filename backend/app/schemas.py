@@ -48,8 +48,11 @@ class FindingOut(BaseModel):
     severity: str
     cvss_score: float
     confidence: str
+    plugin: str
+    cwe: Optional[str]
     evidence: str
     recommendation: str
+    remediation: Optional[str]
 
 
 class ScanOut(BaseModel):

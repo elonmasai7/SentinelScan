@@ -30,6 +30,8 @@ def build_pdf(scan: models.Scan, findings: List[models.Finding]) -> bytes:
         pdf.multi_cell(0, 6, f"Category: {finding.category}")
         pdf.multi_cell(0, 6, f"Evidence: {finding.evidence}")
         pdf.multi_cell(0, 6, f"Recommendation: {finding.recommendation}")
+        if finding.remediation:
+            pdf.multi_cell(0, 6, f"AI Remediation: {finding.remediation}")
         pdf.ln(2)
 
     buffer = BytesIO()
